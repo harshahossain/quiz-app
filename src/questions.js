@@ -1,7 +1,7 @@
 export default [
   {
     id: "q1",
-    text: "Who is the Youngest ballon d'or Winner?",
+    text: "Who is the youngest ballon d'or Winner?",
     answers: [
       "Ronaldo Nazario - Brazil.",
       "Michael Owen - England",
@@ -21,7 +21,7 @@ export default [
   },
   {
     id: "q3",
-    text: "What happens in when the result is 2-2 after 90 mins in a knockout round?",
+    text: "What happens when the result is 2-2 after 90 mins in a knockout round?",
     answers: [
       "The game proceeds to extra-time of 30 minutes after a break.",
       "The game proceeds to penalty shootout.",
@@ -41,7 +41,7 @@ export default [
   },
   {
     id: "q5",
-    text: "Who is the all time leading goal s Cup?",
+    text: "Who is the all time leading goal scoorer in the World Cup?",
     answers: [
       "Miroslav Kolse - Germany.",
       "Ronaldo Nazario - Brazil.",
@@ -81,7 +81,7 @@ export default [
   },
   {
     id: "q9",
-    text: "If an offensive player is fouled in the box the result is _____ kick.",
+    text: "If an offensive player is fouled in the box the, result is _____ kick.",
     answers: ["Penalty.", "Direct.", "Corner.", "Free."],
   },
   {
