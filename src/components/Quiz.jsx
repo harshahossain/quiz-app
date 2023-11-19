@@ -1,34 +1,74 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import QUESTIONS from "../questions";
 import { v4 as uuidv4 } from "uuid";
+import QuizCompleted from "../assets/quiz-completee.png";
+import Question from "./Question";
 //
+
 export default function Quiz() {
+  //refs
+
   //states
   // const [activeQuestion, setActiveQuestion] = useState(0);
+  const [answerState, setAnswerState] = useState("");
   const [userAnswers, setUserAnswers] = useState([]);
   //derived value from state
-  const activeQuestionIndex = userAnswers.length;
+  const activeQuestionIndex =
+    answerState === "" ? userAnswers.length : userAnswers.length - 1;
 
-  function handleSelectAnswer(selectedAnswer) {
-    setUserAnswers((prevState) => {
-      return [...prevState, selectedAnswer];
-    });
+  const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
+
+  //using callback here too . for the dependencies on the handleSkipAnswer
+  const handleSelectAnswer = useCallback(
+    function handleSelectAnswer(selectedAnswer) {
+      setAnswerState("answered");
+      setUserAnswers((prevState) => {
+        return [...prevState, selectedAnswer];
+      });
+      setTimeout(() => {
+        if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
+          setAnswerState("correct");
+        } else {
+          setAnswerState("wrong");
+        }
+        setTimeout(() => {
+          setAnswerState("");
+        }, 2000);
+      }, 1000);
+    },
+    [activeQuestionIndex]
+  );
+
+  //so the handleSelectAnswer doesnt keep executing in QuestineTimer Comp
+  const handleSkipAnswer = useCallback(
+    () => handleSelectAnswer(null),
+    [handleSelectAnswer]
+  );
+
+  if (quizIsComplete) {
+    return (
+      <div id="summary">
+        <img src={QuizCompleted} alt="Ball inside net" />
+        <h2>Quiz Completed</h2>
+      </div>
+    );
   }
+  //
 
+  //
+
+  //adding keys in question timer so it gets destoryed and re-created after a question has been changed
   return (
     <div id="quiz">
-      <div id="question">
-        <h2>{QUESTIONS[activeQuestionIndex].text}</h2>
-        <ul id="answers">
-          {QUESTIONS[activeQuestionIndex].answers.map((answer) => (
-            <li key={uuidv4()} className="answer">
-              <button onClick={() => handleSelectAnswer(answer)}>
-                {answer}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Question
+        key={activeQuestionIndex}
+        questionText={QUESTIONS[activeQuestionIndex].text}
+        answers={QUESTIONS[activeQuestionIndex].answers}
+        onSelectAnswer={handleSelectAnswer}
+        selectedAnswer={userAnswers[userAnswers.length - 1]}
+        answerState={answerState}
+        onSkipAnswer={handleSkipAnswer}
+      />
     </div>
   );
 }
