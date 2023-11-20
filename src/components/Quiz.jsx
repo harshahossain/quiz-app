@@ -1,8 +1,7 @@
 import { useState, useCallback } from "react";
 import QUESTIONS from "../questions";
-import { v4 as uuidv4 } from "uuid";
-import QuizCompleted from "../assets/quiz-completee.png";
 import Question from "./Question";
+import Summary from "./Summary";
 //
 
 export default function Quiz() {
@@ -10,34 +9,22 @@ export default function Quiz() {
 
   //states
   // const [activeQuestion, setActiveQuestion] = useState(0);
-  const [answerState, setAnswerState] = useState("");
+
   const [userAnswers, setUserAnswers] = useState([]);
   //derived value from state
-  const activeQuestionIndex =
-    answerState === "" ? userAnswers.length : userAnswers.length - 1;
+  const activeQuestionIndex = userAnswers.length;
 
   const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
   //using callback here too . for the dependencies on the handleSkipAnswer
-  const handleSelectAnswer = useCallback(
-    function handleSelectAnswer(selectedAnswer) {
-      setAnswerState("answered");
-      setUserAnswers((prevState) => {
-        return [...prevState, selectedAnswer];
-      });
-      setTimeout(() => {
-        if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
-          setAnswerState("correct");
-        } else {
-          setAnswerState("wrong");
-        }
-        setTimeout(() => {
-          setAnswerState("");
-        }, 2000);
-      }, 1000);
-    },
-    [activeQuestionIndex]
-  );
+  const handleSelectAnswer = useCallback(function handleSelectAnswer(
+    selectedAnswer
+  ) {
+    setUserAnswers((prevState) => {
+      return [...prevState, selectedAnswer];
+    });
+  },
+  []);
 
   //so the handleSelectAnswer doesnt keep executing in QuestineTimer Comp
   const handleSkipAnswer = useCallback(
@@ -46,12 +33,7 @@ export default function Quiz() {
   );
 
   if (quizIsComplete) {
-    return (
-      <div id="summary">
-        <img src={QuizCompleted} alt="Ball inside net" />
-        <h2>Quiz Completed</h2>
-      </div>
-    );
+    return <Summary userAnswers={userAnswers} />;
   }
   //
 
@@ -62,11 +44,8 @@ export default function Quiz() {
     <div id="quiz">
       <Question
         key={activeQuestionIndex}
-        questionText={QUESTIONS[activeQuestionIndex].text}
-        answers={QUESTIONS[activeQuestionIndex].answers}
+        questionIndex={activeQuestionIndex}
         onSelectAnswer={handleSelectAnswer}
-        selectedAnswer={userAnswers[userAnswers.length - 1]}
-        answerState={answerState}
         onSkipAnswer={handleSkipAnswer}
       />
     </div>
